@@ -14,11 +14,6 @@ function App() {
   const [resultado, guardarResultado] = useState({});
   const [error, guardarError] = useState(false); 
 
-
-
-
-
-
   const {ciudad, pais} = busqueda;
 
   useEffect(() => { 
@@ -26,7 +21,7 @@ function App() {
     const consutlarAPI = async () => { 
         if(consultar){
         const appId = 'da1b33b1b479abb2c945e3e4fc73bb3a';
-        const url =  `http://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${appId}`;
+        const url =  `https://api.openweathermap.org/data/2.5/weather?q=${ciudad},${pais}&appid=${appId}`;
         
         const respuesta = await fetch(url);
         const resultado = await respuesta.json() 
@@ -34,20 +29,28 @@ function App() {
         guardarResultado(resultado);
         guardarConsultar(false);
 
-        // verifica si hubo resutlados corrctor en la cosnutal 
         if(resultado.cod === '404') { 
           guardarError(true);
+        } else { 
+          guardarError(false);
         }
-
         }
       }
-      
+    
+    
     consutlarAPI();
+    // la sigueinte liena es para waring del useefect  
+    // eslint-disable-next-line
   }, [consultar])
 
+  // CARGAR  CONDICIONALMENTE DE COMPONENTES
   let componente; 
   if(error) {
-    co
+    componente = <Error mensaje="No hay restulados" />
+  } else { 
+    componente = <Clima 
+                    resultado = {resultado}
+                    />
   }
   
   return (
@@ -67,10 +70,8 @@ function App() {
               />
             </div>
 
-            <div className="col m6 s12 ">
-              <Clima 
-                resultado={resultado}
-              /> 
+            <div className="col m6 s12 ">  
+              {componente}
             </div>
           
           </div>
